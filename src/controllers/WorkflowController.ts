@@ -1,10 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import * as WorkflowService from '../services/workflow-service';
 
+//Newly added for websocket
+import { io } from '../server';
+
 export const createWorkflow = (req: Request, res: Response, next: NextFunction ) => {
     try {
         const workflow = WorkflowService.createWorkflow(req.body);
-        res.status(201).json({message: "Workflow created successfully", workflow});        
+
+        //new
+        io.emit('workflowStatus', {
+          id: workflow.id,
+          status: 'created',
+          message: `Workflow ${workflow.name} has been created.`
+      });
+
+        res.status(201).json({message: "Workflow created successfully", workflow});
     } catch (error) {
         next(error);
     }

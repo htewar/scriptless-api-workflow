@@ -29,4 +29,3 @@ export const findUser = (username: string, password: string): User | null => {
 const workflows = new Map<string, Workflow>();
 
 export default workflows
-

@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import authRouter from './routes/auth-routes';
 import workflowRouter from './routes/workflow-routes';
 import errorHandler from './middlewares/error-handler';
+import taskRoutes from './routes/task-routes';
 
 
 const app: Application = express();
@@ -16,6 +17,9 @@ app.use(morgan('dev'));
 // Routest setup
 app.use('/api/auth', authRouter);
 app.use('/api/workflows', workflowRouter);
+
+// new to test websocket
+app.use('/api', taskRoutes);
 
 // Error handling
 app.use(errorHandler);
