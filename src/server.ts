@@ -1,8 +1,12 @@
 import app from './app';
 import { Server } from 'socket.io';
 import http from 'http';
+import { connectToMongo } from './services/db';
+
 
 const PORT = 3000;
+
+connectToMongo();
 
 const server = http.createServer(app);
 

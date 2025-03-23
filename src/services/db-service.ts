@@ -1,29 +1,35 @@
 import fs from 'fs';
 import { io } from '../server';
+import { NodeCommunication } from '../models/Task';
 
-const DB_FILE_PATH = "./tasks.db";
-
-export const readTaskStatus = (): Record<string, string> => {
+export const readTaskStatus = async (): Promise<Record<string, string>> => {
     try {
-        const data = fs.readFileSync(DB_FILE_PATH, 'utf8');
-        return JSON.parse(data);
+        const tasks = await NodeCommunication.find();
+        const result: Record<string, string> = {};
+        tasks.forEach(task => {
+            result[task.nodeId] = task.status;
+        });
+        return result;
     } catch (error) {
-        console.error("Error reading .db file:", error);
+        console.error('Error reading tasks from MongoDB:', error);
         return {};
     }
 };
 
-export const getTaskStatus = (taskId: string): string | null => {
-    const tasks = readTaskStatus();
-    return tasks[taskId] || null;
-};
-
 export const startTaskStatusWatcher = () => {
-    setInterval(() => {
-        const tasks = readTaskStatus();
+    setInterval(async () => {
+        try {
+            const tasks = await readTaskStatus();
 
-        for (const taskId in tasks) {
-            io.emit('taskStatus', { taskId, status: tasks[taskId] });
+            for (const nodeId in tasks) {
+                io.emit('taskStatus', {
+                    nodeId,
+                    status: tasks[nodeId]
+                });
+            }
+
+        } catch (error) {
+            console.error('Error during task status watch:', error);
         }
-    }, 10000); //10 seconds interval
+    }, 10000);
 };
