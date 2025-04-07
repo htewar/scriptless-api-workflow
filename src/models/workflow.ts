@@ -1,3 +1,4 @@
+// Define a base node interface
 export interface BaseNode {
     id: string;
     name: string;
@@ -11,10 +12,19 @@ export interface BaseNode {
     };
 }
 
+// Define a start node
 export interface StartNode extends BaseNode {
     type: 'start';
 }
 
+// Define an assertion interface
+export interface Assertion {
+    property: string;
+    operator: 'equals' | 'contains' | 'greaterThan' | 'lessThan';
+    value: any;
+}
+
+//  Define an HTTP node
 export interface HTTPNode extends BaseNode {
     type: 'http';
     url: string;
@@ -22,11 +32,7 @@ export interface HTTPNode extends BaseNode {
     headers: Record<string,string>;
     queryParams: Record<string,string>;
     payload: Record<string,any>;
-    assertions: Array<{
-        properties: string;
-        operator: 'equals' | 'contains' | 'greaterThan' | 'lessThan';
-        value: any;
-    }>;
+    assertions: Assertion[];
     customerAssertions: {
         language: 'javascript';
         code: string;
@@ -36,18 +42,20 @@ export interface HTTPNode extends BaseNode {
     };    
 }
 
+// Define a function node
 export interface FunctionNode extends BaseNode {
     type: 'function';
     language: 'javascript';
     code: string;
 }
 
-// Define a type that includes all node types
-export type NodeType = StartNode | HTTPNode | FunctionNode;
+export type Node = StartNode | HTTPNode | FunctionNode;
 
+export type NodeTypeString = 'start' | 'http' | 'function';
 
+// Define the Workflow interface
 export interface Workflow {
     id: string;
     name: string;
-    nodes: NodeType[];    
+    nodes: Node[];    
 }

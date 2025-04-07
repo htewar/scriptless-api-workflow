@@ -3,6 +3,7 @@ import { authenticateUser } from '../services/auth-service';
 import { NextFunction } from 'express-serve-static-core';
 import { revokeToken } from '../store/data-store';
 
+
 export const login: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
     try {
         const { username, password } = req.body;
@@ -12,8 +13,7 @@ export const login: RequestHandler = (req: Request, res: Response, next: NextFun
             res.json({ token });         
          } else {
             res.status(401).json({ message: 'Invalid credentials' });
-         }
-        
+         }        
     } catch (error) {
             next(error);
     }

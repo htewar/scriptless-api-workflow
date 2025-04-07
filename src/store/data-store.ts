@@ -21,12 +21,10 @@ const users: User[] = [
     { username: 'admin', password: 'admin' },
 ];
 
-
 export const findUser = (username: string, password: string): User | null => {
     return users.find(user => user.username === username && user.password === password) || null;
 }
 
-const workflows = new Map<string, Workflow>();
+export const workflows = new Map<string, Workflow>();
 
-export default workflows
 

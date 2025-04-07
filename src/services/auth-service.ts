@@ -1,18 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { findUser } from '../store/data-store';
-import dotenv from 'dotenv';
+import { CONFIG } from '../config/config';
 
-// Load environment variables
-dotenv.config();
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY as string; // temporary
-
+// This function authenticates a user by checking the provided username and password
+// against the stored user data. If the credentials are valid, it generates a JWT token
 export const authenticateUser = (username: string, password: string): string | null => {
     const user = findUser(username, password);
     if (!user) {
         return null;
     }
-    return jwt.sign({username: user.username}, SECRET_KEY, {expiresIn: '24h'});
+    return jwt.sign({username: user.username}, CONFIG.JWT_SECRET_KEY, {expiresIn: '24h'});
 };
 
 
