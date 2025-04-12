@@ -1,25 +1,29 @@
-import { NodeTypeString } from './workflow';
+import { NodeTypeString } from "./workflow";
 
-export interface NodeState {
-    response?: {
-        data: any;
-        statusCode?: number;
-    };
-}
+// export interface NodeState { 
+//     data: any;
+//     statusCode?: number;  
+// }
 
-export type NodeProgressStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+export type NodeProgressStatus =
+  | "pending"
+  | "in_progress"
+  | "completed"
+  | "failed";
 
-export interface NodeStatus {    
-    type: NodeTypeString;
-    status: NodeProgressStatus;
-    progressPercentage?: number; //optional     
-    errorMessage: any;
+export interface NodeProgress {
+  type: NodeTypeString;
+  status: NodeProgressStatus;
+  progressPercentage?: number;
+  errorMessage?: any;
 }
 
 export interface WorkflowState {
-    nodesState: Record<string, NodeState>;
-    customVars: Record<string, any>;     
+    state?: {
+        [nodeId: string]: {
+          data?: any;
+        },
+        };
+      customVars?: Record<string, any>;
 }
-
-
 

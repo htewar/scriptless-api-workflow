@@ -6,7 +6,7 @@ import workflowRouter from './routes/workflow-routes';
 import errorHandler from './middlewares/error-handler';
 import { connectRedis } from './config/config';
 import logger from './utils/logger';
-import { startWorker } from './queues/workflow-worker';
+import { startWorkers } from './workers/index';
 
 
 const app: Application = express();
@@ -23,7 +23,7 @@ connectRedis().catch((error) => {
 });
 
 // Start the workflow worker
-startWorker();
+startWorkers();
 
 // Routest setup
 app.use('/api/auth', authRouter);

@@ -5,45 +5,104 @@ import { log } from "console";
 // Function to validate assertions
 // This function takes a response object and an array of assertions
 // It checks if the response meets the conditions specified in the assertions
-// It returns true if all assertions pass, false otherwise
+// It returns true if all assertions pass, otherwise throws an error
 // Supported operators: equals, contains, greaterThan, lessThan
-export const validateAssertions = (response: Record<string, any>, assertions: Assertion[]): boolean => {
-    for (const assertion of assertions) {
-        const { property, operator, value } = assertion;
+export const validateAssertions = (
+  response: Record<string, any>,
+  assertions: Assertion[]
+): true => {
+  for (const assertion of assertions) {
+    const { property, operator, value } = assertion;   
 
-       // Extract actual value from response
-        const actualValue = property.split('.').reduce((obj, key) => obj?.[key], response);
-       
-       if (actualValue === undefined) {
-        logger.warn(`Property '${property}' not found in response`);
-        return false;
-        }
+    // Extract actual value from response
+    const actualValue = property
+      .split(".")
+      .reduce((obj, key) => obj?.[key], response);   
 
-        logger.info(`Validating Assertion - Property: ${property}, Expected: ${value}, Actual: ${actualValue}`);
-
-        // Validate based on the operator
-        switch (operator) {
-            case 'equals':
-                if (actualValue !== value) return false;
-                break;
-            case 'contains':
-                if (typeof actualValue !== 'string' && !Array.isArray(actualValue)) return false;  
-                if (!actualValue.includes(value)) return false;
-                break;  
-            case 'greaterThan':
-                if (typeof actualValue !== 'number' || typeof value !== 'number') return false;
-                if (!(actualValue > value)) return false;
-                break;
-            case 'lessThan':
-                if (typeof actualValue !== 'number' || typeof value !== 'number') return false;
-                if (!(actualValue < value)) return false;
-                break;
-            default:
-                logger.warn(`Unsupported operator: ${operator}`);
-                return false;
-        }
+    if (actualValue === undefined) {
+      throw new Error(
+        `Assertion failed: property '${property}' not found in response`
+      );
     }
-    return true;
+
+    logger.info(
+      `Validating Assertion - Property: ${property}, Expected: ${value}, Actual: ${actualValue}`
+    );
+
+    // Validate based on the operator
+    switch (operator) {
+      case "equals":
+        if (actualValue !== value) {
+          throw new Error(
+            `Assertion failed: '${property}' expected to equal '${value}', but got '${actualValue}'`
+          );
+        }
+        break;
+      case "contains":
+        if (typeof actualValue !== "string" && !Array.isArray(actualValue)) {
+          throw new Error(
+            `Assertion failed: '${property}' expected to be a string or array, but got '${typeof actualValue}'`
+          );
+        }
+        if (!actualValue.includes(value)) {
+          throw new Error(
+            `Assertion failed: '${property}' expected to contain '${value}', but got '${actualValue}'`
+          );
+        }
+        break;
+      case "greaterThan":       
+        if (typeof actualValue !== "number" || typeof value !== "number") {
+          throw new Error(
+            `Assertion failed: 'greaterThan' requires number values. Got '${actualValue}' and '${value}'`
+          );
+        }
+        if (!(actualValue > value)) {
+          throw new Error(
+            `Assertion failed: '${property}' expected to be greater than '${value}', but got '${actualValue}'`
+          );
+        }
+        break;
+      case "greaterThanOrEqualTo":
+        if (typeof actualValue !== "number" || typeof value !== "number") {
+          throw new Error(
+            `Assertion failed: ${property} or ${value} is not a number`
+          );
+        }
+        if (!(actualValue >= value)) {
+          throw new Error(
+            `Assertion failed: ${actualValue} is not greater than or equal to ${value}`
+          );
+        }
+        break;
+      case "lessThan":
+        if (typeof actualValue !== "number" || typeof value !== "number") {
+          throw new Error(
+            `Assertion failed: 'lessThan' requires number values. Got '${actualValue}' and '${value}'`
+          );
+        }
+        if (!(actualValue < value)) {
+          throw new Error(
+            `Assertion failed: '${property}' expected to be less than '${value}', but got '${actualValue}'`
+          );
+        }
+        break;
+      case "lessThanOrEqualTo":
+        if (typeof actualValue !== "number" || typeof value !== "number") {
+          throw new Error(
+            `Assertion failed: ${property} or ${value} is not a number`
+          );
+        }
+        if (!(actualValue <= value)) {
+          throw new Error(
+            `Assertion failed: ${actualValue} is not less than or equal to ${value}`
+          );
+        }
+        break;
+      default:
+        logger.warn(`Unsupported operator: ${operator}`);
+    }
+  }
+  return true;
 };
 
 // // Function to execute custom assertion code

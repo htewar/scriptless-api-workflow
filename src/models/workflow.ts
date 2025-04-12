@@ -20,7 +20,7 @@ export interface StartNode extends BaseNode {
 // Define an assertion interface
 export interface Assertion {
     property: string;
-    operator: 'equals' | 'contains' | 'greaterThan' | 'lessThan';
+    operator: 'equals' | 'contains' | 'greaterThan' | 'greaterThanOrEqualTo' | 'lessThan' | 'lessThanOrEqualTo';
     value: any;
 }
 
@@ -31,14 +31,17 @@ export interface HTTPNode extends BaseNode {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
     headers: Record<string,string>;
     queryParams: Record<string,string>;
-    payload: Record<string,any>;
+    body: {
+        type: 'raw' | 'form-data' | 'binary' | 'x-www-form-urlencoded' | 'graphql';
+        payload: any;
+    };    
     assertions: Assertion[];
     customerAssertions: {
         language: 'javascript';
         code: string;
     }
     state: {
-        customVariables: Record<string,any>;
+        customVars: Record<string,any>;
     };    
 }
 
